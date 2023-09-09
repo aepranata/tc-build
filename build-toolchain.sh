@@ -2,6 +2,10 @@
 
 set -eo pipefail
 
+export CC=$HOME/tools/atiga/bin/clang
+export CXX=$HOME/tools/atiga/bin/clang++
+export install=$HOME/build/atiga
+
 # Function to show an informational message
 function msg() {
     echo -e "\e[1;32m$@\e[0m"
@@ -13,15 +17,17 @@ function msg() {
 # Build LLVM
 msg "Building LLVM..."
 ./build-llvm.py \
-	--clang-vendor "Proton" \
+	--clang-vendor "Atiga" \
 	--targets "ARM;AArch64;X86" \
-	"$repo_flag" \
+    --show-build-commands \
+    --use-good-revision \
 	--pgo kernel-defconfig \
-	--lto full
+	--lto full \
+    --install-folder "$install"
 
 # Build binutils
 msg "Building binutils..."
-./build-binutils.py --targets arm aarch64 x86_64
+./build-binutils.py --targets arm aarch64 x86_64 --with-pkgversion="Atiga Binutils" --install-folder "$install"
 
 # Remove unused products
 msg "Removing unused products..."

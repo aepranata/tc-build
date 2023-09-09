@@ -92,6 +92,17 @@ def parse_parameters(root_folder):
                         host processor.
                         """,
                         type=str)
+    parser.add_argument("--with-pkgversion",
+                        help="""
+                        Add this value to the binutils version string (like "Apple binutils version..." or
+                        "Android binutils version..."). Useful when reverting or applying patches on top
+                        of upstream binutils to differentiate a toolchain built with this script from
+                        upstream binutils or to distinguish a toolchain built with this script from the
+                        system's binutils. Defaults to BuiltLinuxBinutils, can be set to an empty string to
+                        override this and have no vendor in the version string.
+
+                        """,
+                        type=str)
     return parser.parse_args()
 
 
