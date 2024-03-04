@@ -26,6 +26,7 @@ class BinutilsBuilder(Builder):
             '--enable-threads',
             '--quiet',
             '--with-system-zlib',
+            '--with-pkgversion="Atiga Binutils"',
         ]
         # gprofng uses glibc APIs that might not be available on musl
         if tc_build.utils.libc_is_musl():
