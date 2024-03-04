@@ -99,12 +99,12 @@ function do_llvm() {
         --check-targets clang lld llvm \
         --install-folder "$install" \
         --install-target distribution \
-        --projects clang lld \
+        --projects clang lld polly \
         --quiet-cmake \
-        --ref release/17.x \
         --shallow-clone \
         --show-build-commands \
-        --targets X86 \
+        --targets ARM AArch64 X86 \
+        --vendor-string "Atiga" \
         "${extra_args[@]}"
 }
 
