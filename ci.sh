@@ -21,13 +21,14 @@ function do_all() {
     do_llvm
     do_binutils
     do_kernel
+    do_strip
 }
 
 function do_binutils() {
     "$base"/build-binutils.py \
         --install-folder "$install" \
         --show-build-commands \
-        --targets x86_64
+        --targets arm aarch64 x86_64
 }
 
 function do_deps() {
@@ -99,6 +100,7 @@ function do_llvm() {
         --check-targets clang lld llvm \
         --install-folder "$install" \
         --install-target distribution \
+        --lto full
         --projects clang lld polly \
         --quiet-cmake \
         --shallow-clone \
@@ -106,6 +108,21 @@ function do_llvm() {
         --targets ARM AArch64 X86 \
         --vendor-string "Atiga" \
         "${extra_args[@]}"
+}
+
+function do_strip() {
+    rm -fr install/include
+    rm -f install/lib/*.a install/lib/*.la
+
+    for f in $(find install -type f -exec file {} \; | grep 'not stripped' | awk '{print $1}'); do
+        strip ${f: : -1}
+    done
+
+    for bin in $(find install -mindepth 2 -maxdepth 3 -type f -exec file {} \; | grep 'ELF .* interpreter' | awk '{print $1}'); do
+        bin="${bin: : -1}"
+
+        patchelf --set-rpath '$ORIGIN/../lib' "$bin"
+    done
 }
 
 parse_parameters "$@"
