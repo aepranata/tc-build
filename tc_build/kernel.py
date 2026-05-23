@@ -17,7 +17,7 @@ class KernelBuilder(Builder):
     # If the user supplies their own kernel source, it must be at least this
     # version to ensure that all the build commands work, as the build commands
     # were written to target at least this version.
-    MINIMUM_SUPPORTED_VERSION = (6, 9, 0)
+    MINIMUM_SUPPORTED_VERSION = (4, 19, 0)
 
     def __init__(self, arch):
         super().__init__()
@@ -28,9 +28,10 @@ class KernelBuilder(Builder):
         self.cross_compile = None
         self.lsm = None
         self.make_variables = {
-            'ARCH': arch,
+            'ARCH': 'arm64',
             # We do not want warnings to cause build failures when profiling.
             'KCFLAGS': '-Wno-error',
+            #'LLVM_IAS': 0,
         }
         self.show_commands = True
         self.toolchain_prefix = None
@@ -98,7 +99,7 @@ class KernelBuilder(Builder):
             ]  # yapf: disable
         make_cmd += ['make', '-C', self.folders.source, f"-skj{os.cpu_count()}"]
         make_cmd += [f"{key}={self.make_variables[key]}" for key in sorted(self.make_variables)]
-        make_cmd += [*self.config_targets, 'all']
+        make_cmd += ['vendor/asus/X00TD_defconfig']
 
         # If the user has any CFLAGS in their environment, they can cause issues when building tools.
         # Ideally, the kernel would always clobber user flags via ':=' but we deal with reality.
@@ -195,6 +196,13 @@ class ArmV7KernelBuilder(ArmKernelBuilder):
         super().__init__()
 
         self.config_targets = ['multi_v7_defconfig']
+
+class ArmX00TDKernelBuilder(ArmKernelBuilder):
+
+    def __init__(self):
+        super().__init__()
+
+        self.config_targets = ['vendor/asus/X00TD_defconfig']
 
 
 class Arm64KernelBuilder(KernelBuilder):
@@ -417,9 +425,10 @@ class LLVMKernelBuilder(Builder):
                     builders.append(builder)
                 elif config_target == 'defconfig' and llvm_target == 'ARM':
                     builders += [
-                        ArmV5KernelBuilder(),
-                        ArmV6KernelBuilder(),
-                        ArmV7KernelBuilder(),
+                        #ArmV5KernelBuilder(),
+                        #ArmV6KernelBuilder(),
+                        #ArmV7KernelBuilder(),
+                        ArmX00TDKernelBuilder(),
                     ]
                 elif config_target == 'defconfig' and llvm_target == 'Mips':
                     builders.append(MIPSKernelBuilder())
