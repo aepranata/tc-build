@@ -601,6 +601,7 @@ class LLVMSourceManager:
 
     def default_targets(self):
         all_targets = get_all_targets(self.repo)
+        # Default to AArch64 (arm64) first
         targets = [
             'AArch64', 'ARM', 'BPF', 'Hexagon', 'Mips', 'PowerPC', 'RISCV', 'Sparc', 'SystemZ',
             'X86'

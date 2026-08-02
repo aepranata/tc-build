@@ -99,7 +99,7 @@ class KernelBuilder(Builder):
             ]  # yapf: disable
         make_cmd += ['make', '-C', self.folders.source, f"-skj{os.cpu_count()}"]
         make_cmd += [f"{key}={self.make_variables[key]}" for key in sorted(self.make_variables)]
-        make_cmd += ['vendor/asus/X00TD_defconfig']
+        make_cmd += self.config_targets
 
         # If the user has any CFLAGS in their environment, they can cause issues when building tools.
         # Ideally, the kernel would always clobber user flags via ':=' but we deal with reality.
