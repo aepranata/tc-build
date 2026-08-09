@@ -17,6 +17,23 @@ DIR="$(pwd)"
 install=$DIR/install
 src=$DIR/src
 
+# Provide missing kernel UAPI headers (e.g. linux/scc.h) that compiler-rt's
+# sanitizer_common needs when compiling for the x86_64 host. CPATH must point
+# to the directory ABOVE "linux/" since the source does `#include <linux/scc.h>`.
+# Provide missing kernel UAPI headers (e.g. linux/scc.h) that compiler-rt's
+# sanitizer_common needs when compiling for the x86_64 host. CPATH must point
+# to the directory ABOVE "linux/" since the source does `#include <linux/scc.h>`.
+mkdir -p "$src/include/linux"
+if [ ! -s "$src/include/linux/scc.h" ]; then
+    msg "Fetching missing linux/scc.h header ..."
+    curl -fsSL -o "$src/include/linux/scc.h" \
+        https://raw.githubusercontent.com/torvalds/linux/master/include/uapi/linux/scc.h || {
+        err "Failed to download linux/scc.h ! Check network connection."
+        exit 1
+    }
+fi
+export CPATH="$src/include"
+
 # Auto-detect MLGO Model Path (similar to X00TD detection)
 # Priority order:
 # 1. $src/mlgo-model
@@ -84,6 +101,15 @@ fi
 
 # Execute build
 "${BUILD_CMD[@]}" 2>&1 | tee build.log
+build_status=${PIPESTATUS[0]}
+ 
+# Stop immediately if build-llvm.py itself failed (this is the REAL exit
+# code of the build, not of `tee`).
+if [ "$build_status" -ne 0 ]; then
+	err "Building LLVM failed (exit code $build_status) ! Kindly check errors !!"
+	err "See build.log for details"
+	exit 1
+fi
 
 # Check if the final clang binary exists or not.
 [ ! -f install/bin/clang-2* ] && {
