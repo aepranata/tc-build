@@ -27,7 +27,7 @@ mkdir -p "$src/include/linux"
 if [ ! -s "$src/include/linux/scc.h" ]; then
     msg "Fetching missing linux/scc.h header ..."
     curl -fsSL -o "$src/include/linux/scc.h" \
-        https://raw.githubusercontent.com/torvalds/linux/master/include/uapi/linux/scc.h || {
+        https://raw.githubusercontent.com/torvalds/linux/v6.6/include/uapi/linux/scc.h || {
         err "Failed to download linux/scc.h ! Check network connection."
         exit 1
     }

@@ -31,12 +31,12 @@ popd || exit
 
 llvm_commit_url="https://android.googlesource.com/toolchain/llvm-project.git/+/$short_llvm_commit"
 binutils_ver="$(ls "$src" | grep "^binutils-" | grep -v ".tar" | sed "s/binutils-//g")"
-clang_version="$(install/bin/clang --version | head -n1 | cut -d' ' -f4)"
+clang_version="$(install/bin/clang --version | head -n1 | cut -d' ' -f11)"
 
-rel_repo="$(realpath "$SCRIPT_DIR/../atiga-clang/")"
+rel_repo="$(realpath "$DIR/../atiga-clang/")"
 # Push to GitHub
 # Update Git repository
-if [ ! -d rel_repo ]; then
+if [ ! -d $rel_repo ]; then
     git clone "git@github.com:aepranata/atiga-clang.git" $rel_repo
 fi
 pushd $rel_repo || exit
