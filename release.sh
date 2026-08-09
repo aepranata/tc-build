@@ -13,7 +13,8 @@ export BRANCH=main
 export CACHE=1
 
 # Get home directory
-DIR="$(pwd)"
+DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
 install=$DIR/install
 src=$DIR/src
 
@@ -32,14 +33,15 @@ llvm_commit_url="https://android.googlesource.com/toolchain/llvm-project.git/+/$
 binutils_ver="$(ls "$src" | grep "^binutils-" | grep -v ".tar" | sed "s/binutils-//g")"
 clang_version="$(install/bin/clang --version | head -n1 | cut -d' ' -f4)"
 
+rel_repo="$(realpath "$SCRIPT_DIR/../atiga-clang/")"
 # Push to GitHub
 # Update Git repository
 if [ ! -d rel_repo ]; then
-    git clone "git@github.com:aepranata/atiga-clang.git" rel_repo
+    git clone "git@github.com:aepranata/atiga-clang.git" $rel_repo
 fi
-pushd rel_repo || exit
+pushd $rel_repo || exit
 rm -fr ./*
-cp -r ../install/* .
+cp -r $install/* .
 git lfs install
 git lfs track "bugpoint"
 git lfs track "c-index-test"
@@ -67,9 +69,9 @@ git lfs track "llvm-lto2"
 git lfs track "llvm-reduce"
 git lfs track "llvm-split"
 git lfs track "opt"
-git lfs track "libclang.so.21.0.0git"
-git lfs track "libclang-cpp.so.21.0git"
-git lfs track "libLTO.so.21.0git"
+git lfs track "libclang.so.21.0.0*"
+git lfs track "libclang-cpp.so.21.0*"
+git lfs track "libLTO.so.21.0*"
 git checkout README.md # keep this as it's not part of the toolchain itself
 git add .
 git commit -asm "Nightcord: Update to $rel_date build
