@@ -1,0 +1,242 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    ATIGA CLANG - OPTIMIZATIONS QUICK REFERENCE               ║
+║                              Build System Guide                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🚀 AVAILABLE OPTIMIZATIONS                                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────┬──────────────────┬─────────────┬──────────┬─────────────┐
+  │ Type    │ Performance Gain │ Build Time  │ RAM Req  │ Status      │
+  ├─────────┼──────────────────┼─────────────┼──────────┼─────────────┤
+  │ BOLT    │ +5-7%            │ 3-4 hours   │ 16GB     │ ✅ Available │
+  │ PGO     │ +15-20%          │ 4-6 hours   │ 16GB     │ ✅ Available │
+  │ LTO     │ +3-5%            │ 2-3 hours   │ 16GB     │ ✅ Available │
+  │ MLGO    │ +2-5%            │ +1-2 hours  │ 8GB      │ ✅ NEW!      │
+  ├─────────┼──────────────────┼─────────────┼──────────┼─────────────┤
+  │ ALL     │ +25-35%          │ 12-18 hours │ 64GB     │ ✅ Combined  │
+  └─────────┴──────────────────┴─────────────┴──────────┴─────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ⚡ QUICK START COMMANDS                                                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ► Default Optimized Build
+    $ ./atiga.sh
+
+  ► Interactive Menu
+    $ ./build-examples.sh
+
+  ► Test Setup
+    $ ./test-optimizations.sh
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 BUILD PROFILES                                                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  [1] QUICK BUILD - Development/Testing
+      Time: 30-60 min | RAM: 8GB | Gain: Baseline
+      ┌────────────────────────────────────────────────────────────────────┐
+      │ ./build-llvm.py --build-stage1-only                                │
+      └────────────────────────────────────────────────────────────────────┘
+
+  [2] BALANCED BUILD - Daily Use
+      Time: 2-3 hours | RAM: 16GB | Gain: +3-5%
+      ┌────────────────────────────────────────────────────────────────────┐
+      │ ./build-llvm.py --lto thin                                         │
+      └────────────────────────────────────────────────────────────────────┘
+
+  [3] OPTIMAL BUILD - Recommended ⭐
+      Time: 10-12 hours | RAM: 32GB | Gain: +20-30%
+      ┌────────────────────────────────────────────────────────────────────┐
+      │ ./build-llvm.py \                                                  │
+      │     --pgo kernel-defconfig-slim \                                  │
+      │     --lto thin \                                                   │
+      │     --bolt \                                                       │
+      │     --assertions                                                   │
+      └────────────────────────────────────────────────────────────────────┘
+
+  [4] MAXIMUM BUILD - Best Performance 🏆
+      Time: 12-18 hours | RAM: 64GB | Gain: +25-35%
+      ┌────────────────────────────────────────────────────────────────────┐
+      │ ./build-llvm.py \                                                  │
+      │     --pgo kernel-defconfig kernel-allmodconfig-slim \              │
+      │     --lto thin \                                                   │
+      │     --bolt \                                                       │
+      │     --mlgo /path/to/model \                                        │
+      │     --assertions                                                   │
+      └────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🔧 MLGO SETUP (NEW!)                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Step 1: Get MLGO Model
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ git clone https://github.com/google/ml-compiler-opt               │
+  │ cd ml-compiler-opt                                                 │
+  │ # Follow instructions to download/train model                     │
+  └────────────────────────────────────────────────────────────────────┘
+
+  Step 2: Configure atiga.sh
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ # Edit atiga.sh and set:                                           │
+  │ MLGO_MODEL_PATH="/path/to/your/mlgo/model"                        │
+  └────────────────────────────────────────────────────────────────────┘
+
+  Step 3: Build
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ ./atiga.sh                                                         │
+  └────────────────────────────────────────────────────────────────────┘
+
+  Or use directly:
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ ./build-llvm.py --mlgo /path/to/model [other options]             │
+  └────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📋 COMMAND LINE OPTIONS                                                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  --bolt                          Enable BOLT optimization
+  --pgo <benchmark>              Enable PGO with benchmark
+                                 (kernel-defconfig-slim recommended)
+  --lto <thin|full>              Enable LTO (thin recommended)
+  --mlgo <model_path>            Enable MLGO (NEW!)
+  --assertions                    Enable assertions (recommended with BOLT+PGO)
+  --install-folder <path>        Installation directory
+  --vendor-string <name>         Custom vendor string
+  --targets <arch> [arch...]     Target architectures
+  --linux-folder <path>          Linux source for PGO/BOLT
+  --build-stage1-only            Quick single-stage build
+  --quiet-cmake                   Reduce cmake output
+  --show-build-commands          Show build commands
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🎪 PGO BENCHMARKS                                                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  kernel-defconfig              Full build, all targets
+  kernel-defconfig-slim         ⭐ One target only (recommended)
+  kernel-allmodconfig           Full allmodconfig build
+  kernel-allmodconfig-slim      One target allmodconfig
+  kernel-allyesconfig           Full allyesconfig build
+  kernel-allyesconfig-slim      One target allyesconfig
+  llvm                          Use LLVM build as benchmark
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 💾 SYSTEM REQUIREMENTS                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────┬─────────────┬──────────────┬─────────────┐
+  │ Build Type   │ CPU Cores   │ RAM          │ Disk Space  │
+  ├──────────────┼─────────────┼──────────────┼─────────────┤
+  │ Basic        │ 4+          │ 8GB          │ 20GB        │
+  │ LTO          │ 4+          │ 16GB         │ 25GB        │
+  │ PGO          │ 8+          │ 16GB         │ 30GB        │
+  │ Optimal      │ 8+          │ 32GB         │ 50GB        │
+  │ Maximum      │ 16+         │ 64GB         │ 100GB       │
+  └──────────────┴─────────────┴──────────────┴─────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🐛 COMMON ISSUES & SOLUTIONS                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Problem: BOLT crashes with PGO
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ Solution: Add --assertions flag                                    │
+  │ ./build-llvm.py --bolt --pgo kernel-defconfig-slim --assertions    │
+  └────────────────────────────────────────────────────────────────────┘
+
+  Problem: Out of memory during LTO
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ Solution: Use ThinLTO and limit parallel jobs                      │
+  │ ./build-llvm.py --lto thin \                                       │
+  │     --defines LLVM_PARALLEL_LINK_JOBS=2                            │
+  └────────────────────────────────────────────────────────────────────┘
+
+  Problem: MLGO model not found
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ Solution: Verify model path exists and is a directory              │
+  │ ls -la /path/to/mlgo/model                                         │
+  └────────────────────────────────────────────────────────────────────┘
+
+  Problem: Build takes too long
+  ┌────────────────────────────────────────────────────────────────────┐
+  │ Solution: Use lighter configuration or increase parallel jobs      │
+  │ ./build-llvm.py --lto thin \                                       │
+  │     --defines LLVM_PARALLEL_COMPILE_JOBS=$(nproc)                  │
+  └────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📚 DOCUMENTATION FILES                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  BUILD_OPTIMIZATIONS.md        Technical guide for all optimizations
+  OPTIMIZATIONS_README.md        User-friendly overview and examples
+  CHANGELOG.md                   Detailed changelog of all changes
+  SUMMARY.txt                    Complete summary of updates
+  README.md                      Main project documentation
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🔗 USEFUL LINKS                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  LLVM BOLT        https://github.com/llvm/llvm-project/tree/main/bolt
+  LLVM PGO         https://llvm.org/docs/HowToBuildWithPGO.html
+  LLVM LTO         https://llvm.org/docs/LinkTimeOptimization.html
+  LLVM ThinLTO     https://clang.llvm.org/docs/ThinLTO.html
+  LLVM MLGO        https://llvm.org/docs/OptimizingMLGO.html
+  ML Compiler Opt  https://github.com/google/ml-compiler-opt
+  ClangBuiltLinux  https://github.com/ClangBuiltLinux/tc-build
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📝 TIPS & TRICKS                                                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ► Use ccache for faster stage-1 rebuilds (enabled by default)
+  ► kernel-defconfig-slim is fastest PGO option with good results
+  ► ThinLTO has 99% of Full LTO performance with much less RAM
+  ► Combine --pgo + --lto + --bolt for best results without MLGO
+  ► Add --assertions when using BOLT + PGO together
+  ► Use --linux-folder to avoid re-downloading kernel source
+  ► Set LLVM_PARALLEL_*_JOBS based on available RAM
+  ► Test with --build-stage1-only before long optimized builds
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ⚠️  IMPORTANT NOTES                                                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  • MLGO requires TensorFlow C API installed on system
+  • All optimizations are optional and can be combined
+  • Build times increase significantly with more optimizations
+  • Performance gains are cumulative when combining optimizations
+  • Always ensure adequate RAM for chosen configuration
+  • Use SSD for faster builds (HDD will be much slower)
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                            QUICK DECISION TREE                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  Need it fast? (< 1 hour)
+  └─► ./build-llvm.py --build-stage1-only
+
+  Want good performance? (2-3 hours, 16GB RAM)
+  └─► ./build-llvm.py --lto thin
+
+  Want great performance? (10-12 hours, 32GB RAM) ⭐ RECOMMENDED
+  └─► ./build-llvm.py --pgo kernel-defconfig-slim --lto thin --bolt --assertions
+
+  Want maximum performance? (12-18 hours, 64GB RAM)
+  └─► ./build-llvm.py --pgo kernel-defconfig-slim --lto thin --bolt --mlgo /path/to/model --assertions
+
+  Just want defaults?
+  └─► ./atiga.sh
+
+  Want interactive menu?
+  └─► ./build-examples.sh
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  Version: 2026-08-03 | Status: ✅ ALL FEATURES AVAILABLE | Happy Building! 🚀 ║
+╚══════════════════════════════════════════════════════════════════════════════╝

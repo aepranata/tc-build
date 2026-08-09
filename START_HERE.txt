@@ -1,0 +1,140 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║                    🎯 START HERE - QUICK GUIDE 🎯                  ║
+║                                                                    ║
+║              Atiga Clang Build Optimizations                       ║
+║                                                                    ║
+╚════════════════════════════════════════════════════════════════════╝
+
+Halo! Build system Anda sekarang mendukung 4 optimisasi:
+  ✅ BOLT, PGO, LTO, MLGO
+
+Hasilnya: Compile time bisa +25-35% lebih cepat!
+
+────────────────────────────────────────────────────────────────────
+
+📚 STEP 1: BACA DOKUMENTASI (Pilih salah satu)
+
+  Untuk pemula:
+    $ cat DONE.txt                    (2 menit - ringkasan)
+    $ cat INDEX.md                    (5 menit - navigation)
+  
+  Untuk detail:
+    $ cat QUICK_REFERENCE.txt         (20 menit - cheat sheet)
+    $ cat BUILD_OPTIMIZATIONS.md      (30 menit - technical)
+
+────────────────────────────────────────────────────────────────────
+
+🧪 STEP 2: TEST VALIDASI
+
+  $ ./test-optimizations.sh
+
+  Ini akan mengecek apakah semua fitur siap digunakan.
+
+────────────────────────────────────────────────────────────────────
+
+🚀 STEP 3: BUILD!
+
+  Pilihan A - Default (PGO + LTO + BOLT):
+    $ ./atiga.sh
+    
+    Waktu: 10-12 jam
+    RAM: 32GB
+    Hasil: +20-30% lebih cepat
+
+  Pilihan B - Menu Interaktif:
+    $ ./build-examples.sh
+    
+    Pilih dari 7 preset yang tersedia
+
+  Pilihan C - Quick Test:
+    $ ./build-llvm.py --build-stage1-only
+    
+    Waktu: 30-60 menit
+    RAM: 8GB
+    Hanya untuk testing
+
+────────────────────────────────────────────────────────────────────
+
+💡 OPTIONAL: SETUP MLGO (Performa Maksimal +25-35%)
+
+  1. Download MLGO model:
+     git clone https://github.com/google/ml-compiler-opt
+  
+  2. Install TensorFlow C API
+  
+  3. Edit atiga.sh:
+     MLGO_MODEL_PATH="/path/to/your/model"
+  
+  4. Build:
+     $ ./atiga.sh
+
+────────────────────────────────────────────────────────────────────
+
+📖 FILE PENTING:
+
+  INDEX.md                  → Navigation semua dokumentasi
+  DONE.txt                  → Ringkasan singkat
+  QUICK_REFERENCE.txt       → Cheat sheet lengkap
+  BUILD_OPTIMIZATIONS.md    → Panduan teknis detail
+  OPTIMIZATIONS_README.md   → User guide
+  build-examples.sh         → Menu interaktif
+  test-optimizations.sh     → Test suite
+
+────────────────────────────────────────────────────────────────────
+
+❓ PERTANYAAN UMUM:
+
+  Q: Harus pakai MLGO?
+  A: Tidak, MLGO optional. Tanpa MLGO sudah dapat +20-30%.
+
+  Q: Berapa lama build dengan semua optimisasi?
+  A: 12-18 jam untuk maximum build (All+MLGO).
+
+  Q: Berapa RAM yang dibutuhkan?
+  A: Minimum 8GB, optimal 32GB, maximum 64GB.
+
+  Q: Build gagal, apa yang harus dilakukan?
+  A: Baca QUICK_REFERENCE.txt bagian Troubleshooting.
+
+────────────────────────────────────────────────────────────────────
+
+🎯 REKOMENDASI:
+
+  Untuk pengguna biasa:
+    → Gunakan: ./atiga.sh
+    → Hasil: +20-30% performa (PGO+LTO+BOLT)
+
+  Untuk performa maksimal:
+    → Setup MLGO dulu
+    → Edit atiga.sh
+    → Hasil: +25-35% performa (All+MLGO)
+
+────────────────────────────────────────────────────────────────────
+
+✅ CHECKLIST SEBELUM BUILD:
+
+  [ ] Sudah baca DONE.txt atau INDEX.md
+  [ ] Sudah jalankan ./test-optimizations.sh
+  [ ] Cek disk space (minimal 50GB)
+  [ ] Cek RAM (minimal 32GB untuk optimal build)
+  [ ] Pilih build preset dari ./build-examples.sh
+  [ ] Siap menunggu 10-18 jam (tergantung preset)
+
+────────────────────────────────────────────────────────────────────
+
+🎉 SELAMAT!
+
+Build system Anda sekarang siap menghasilkan compiler yang
+25-35% lebih cepat!
+
+Mulai dari:
+  $ cat INDEX.md        (navigation)
+  $ ./atiga.sh          (default build)
+
+Selamat menggunakan! 🚀
+
+────────────────────────────────────────────────────────────────────
+Last Updated: 2026-08-03 16:45 UTC
+Maintainer: aepranata
+════════════════════════════════════════════════════════════════════

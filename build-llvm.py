@@ -236,6 +236,26 @@ parser.add_argument('--lto',
                     '''),
                     type=str,
                     choices=['thin', 'full'])
+parser.add_argument('--mlgo',
+                    metavar='MLGO_MODEL',
+                    help=textwrap.dedent('''\
+                    Build the final compiler with Machine Learning Guided Optimization (MLGO), which uses
+                    machine learning models to guide compiler optimizations. This can improve code generation
+                    and inlining decisions.
+
+                    You need to provide the path to a trained MLGO model. MLGO models can be obtained from:
+                    https://github.com/google/ml-compiler-opt
+
+                    The model should be a TensorFlow SavedModel or a compatible format that LLVM can use
+                    for optimization decisions during compilation.
+
+                    Example: --mlgo /path/to/mlgo/model
+
+                    This option requires TensorFlow C API to be installed on your system. See:
+                    https://llvm.org/docs/OptimizingMLGO.html
+
+                    '''),
+                    type=str)
 parser.add_argument('-n',
                     '--no-update',
                     help=textwrap.dedent('''\
@@ -688,6 +708,12 @@ final.show_commands = args.show_build_commands
 
 if args.lto:
     final.cmake_defines['LLVM_ENABLE_LTO'] = args.lto.capitalize()
+if args.mlgo:
+    mlgo_model_path = Path(args.mlgo).resolve()
+    if not mlgo_model_path.exists():
+        raise RuntimeError(f"MLGO model path ('{args.mlgo}') does not exist!")
+    final.cmake_defines['LLVM_ENABLE_ML_INLINER'] = 'ON'
+    final.cmake_defines['LLVM_INLINER_MODEL_PATH'] = mlgo_model_path
 if args.pgo:
     final.cmake_defines['LLVM_PROFDATA_FILE'] = Path(instrumented.folders.build, 'profdata.prof')
 
